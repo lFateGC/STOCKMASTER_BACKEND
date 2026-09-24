@@ -15,233 +15,264 @@ public class HomeController {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>StockMaster API - Servidor Backend</title>
+            <title>StockMaster — API REST</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body {
-                    font-family: 'Inter', sans-serif;
+                    font-family: 'Inter', system-ui, -apple-system, sans-serif;
                     background-color: #0f172a;
                     color: #e2e8f0;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     min-height: 100vh;
-                    padding: 24px;
+                    padding: 32px 16px;
                 }
                 .container {
-                    max-width: 800px;
+                    max-width: 860px;
                     width: 100%;
                     background: #1e293b;
                     border: 1px solid #334155;
-                    border-radius: 16px;
-                    padding: 40px;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    border-radius: 12px;
+                    padding: 36px 40px;
+                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
                 }
                 .header {
                     display: flex;
-                    align-items: center;
+                    align-items: flex-start;
                     justify-content: space-between;
                     border-bottom: 1px solid #334155;
-                    padding-bottom: 24px;
-                    margin-bottom: 28px;
+                    padding-bottom: 20px;
+                    margin-bottom: 24px;
                     flex-wrap: wrap;
                     gap: 16px;
                 }
-                .brand {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-                .logo-icon {
-                    width: 48px;
-                    height: 48px;
-                    background: linear-gradient(135deg, #3b82f6, #06b6d4);
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 24px;
-                }
-                .brand-text h1 {
-                    font-size: 24px;
+                .title-area h1 {
+                    font-size: 22px;
                     font-weight: 700;
                     color: #ffffff;
+                    letter-spacing: -0.3px;
                 }
-                .brand-text p {
+                .title-area p {
                     font-size: 14px;
                     color: #94a3b8;
+                    margin-top: 4px;
                 }
-                .status-badge {
+                .badge-status {
                     display: inline-flex;
                     align-items: center;
                     gap: 8px;
-                    background: rgba(16, 185, 129, 0.15);
+                    background: rgba(16, 185, 129, 0.12);
                     color: #34d399;
-                    border: 1px solid rgba(16, 185, 129, 0.3);
+                    border: 1px solid rgba(16, 185, 129, 0.25);
                     padding: 6px 14px;
-                    border-radius: 9999px;
-                    font-size: 13px;
+                    border-radius: 6px;
+                    font-size: 12px;
                     font-weight: 600;
-                }
-                .status-dot {
-                    width: 8px;
-                    height: 8px;
-                    background: #10b981;
-                    border-radius: 50%;
-                    box-shadow: 0 0 10px #10b981;
-                }
-                .grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                    gap: 16px;
-                    margin-bottom: 32px;
-                }
-                .card {
-                    background: #0f172a;
-                    border: 1px solid #334155;
-                    border-radius: 12px;
-                    padding: 16px;
-                }
-                .card-title {
-                    font-size: 13px;
-                    color: #94a3b8;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
-                    margin-bottom: 6px;
                 }
-                .card-value {
-                    font-size: 16px;
+                .dot {
+                    width: 7px;
+                    height: 7px;
+                    background: #10b981;
+                    border-radius: 50%;
+                }
+                .section-title {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #94a3b8;
+                    text-transform: uppercase;
+                    letter-spacing: 0.6px;
+                    margin-bottom: 12px;
+                }
+                .spec-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                    gap: 12px;
+                    margin-bottom: 28px;
+                }
+                .spec-card {
+                    background: #0f172a;
+                    border: 1px solid #334155;
+                    border-radius: 8px;
+                    padding: 14px 16px;
+                }
+                .spec-label {
+                    font-size: 11px;
+                    color: #64748b;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 4px;
+                }
+                .spec-value {
+                    font-size: 14px;
                     font-weight: 600;
                     color: #f1f5f9;
                 }
-                .endpoints-section {
+                .table-container {
                     background: #0f172a;
                     border: 1px solid #334155;
-                    border-radius: 12px;
-                    padding: 20px;
+                    border-radius: 8px;
+                    overflow: hidden;
                     margin-bottom: 28px;
                 }
-                .endpoints-section h2 {
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #f8fafc;
-                    margin-bottom: 14px;
-                }
-                .endpoint-row {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 8px 0;
-                    border-bottom: 1px solid #1e293b;
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
                     font-size: 13px;
+                    text-align: left;
                 }
-                .endpoint-row:last-child { border-bottom: none; }
-                .method {
-                    font-weight: 700;
+                th {
+                    background: #1e293b;
+                    color: #94a3b8;
+                    font-weight: 600;
+                    padding: 10px 16px;
+                    text-transform: uppercase;
                     font-size: 11px;
+                    letter-spacing: 0.5px;
+                    border-bottom: 1px solid #334155;
+                }
+                td {
+                    padding: 11px 16px;
+                    border-bottom: 1px solid #1e293b;
+                }
+                tr:last-child td { border-bottom: none; }
+                .method-badge {
+                    font-size: 11px;
+                    font-weight: 700;
                     padding: 3px 8px;
                     border-radius: 4px;
-                    min-width: 50px;
-                    text-align: center;
+                    display: inline-block;
+                    font-family: monospace;
                 }
-                .post { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-                .get  { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-                .path { font-family: monospace; color: #cbd5e1; }
-                .desc { color: #94a3b8; margin-left: auto; }
+                .method-post { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+                .method-get  { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+                .endpoint-path {
+                    font-family: 'Consolas', 'Courier New', monospace;
+                    color: #f8fafc;
+                    font-size: 12px;
+                }
+                .access-tag {
+                    font-size: 11px;
+                    color: #94a3b8;
+                }
                 .footer {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #64748b;
                     flex-wrap: wrap;
                     gap: 12px;
+                    padding-top: 12px;
                 }
-                .btn-repo {
-                    background: #3b82f6;
-                    color: #ffffff;
+                .repo-link {
+                    color: #38bdf8;
                     text-decoration: none;
-                    padding: 8px 16px;
-                    border-radius: 8px;
-                    font-size: 13px;
                     font-weight: 500;
-                    transition: background 0.2s;
+                    border: 1px solid #334155;
+                    padding: 6px 12px;
+                    border-radius: 6px;
+                    transition: border-color 0.2s, background 0.2s;
                 }
-                .btn-repo:hover {
-                    background: #2563eb;
+                .repo-link:hover {
+                    border-color: #38bdf8;
+                    background: rgba(56, 189, 248, 0.05);
                 }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="brand">
-                        <div class="logo-icon">📦</div>
-                        <div class="brand-text">
-                            <h1>StockMaster API</h1>
-                            <p>Servidor Backend de Gestión de Inventarios y Ventas</p>
-                        </div>
+                    <div class="title-area">
+                        <h1>StockMaster &mdash; Plataforma de Servicios REST</h1>
+                        <p>Módulo de Backend, Seguridad y Lógica de Negocio</p>
                     </div>
-                    <div class="status-badge">
-                        <span class="status-dot"></span>
-                        Servicio en línea
+                    <div class="badge-status">
+                        <span class="dot"></span>
+                        Estado: Activo
                     </div>
                 </div>
 
-                <div class="grid">
-                    <div class="card">
-                        <div class="card-title">Base de Datos</div>
-                        <div class="card-value">PostgreSQL (Supabase)</div>
+                <div class="section-title">Especificaciones Técnicas</div>
+                <div class="spec-grid">
+                    <div class="spec-card">
+                        <div class="spec-label">Entorno</div>
+                        <div class="spec-value">Java 21 / Spring Boot</div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">Arquitectura</div>
-                        <div class="card-value">Spring Boot 4 / Java 21</div>
+                    <div class="spec-card">
+                        <div class="spec-label">Base de Datos</div>
+                        <div class="spec-value">PostgreSQL (Supabase)</div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">Seguridad</div>
-                        <div class="card-value">JWT + BCrypt + AES-256</div>
+                    <div class="spec-card">
+                        <div class="spec-label">Autenticación</div>
+                        <div class="spec-value">JWT / BCrypt</div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">Servidor Cloud</div>
-                        <div class="card-value">Render Web Service</div>
+                    <div class="spec-card">
+                        <div class="spec-label">Cifrado de Datos</div>
+                        <div class="spec-value">AES-256-GCM</div>
                     </div>
                 </div>
 
-                <div class="endpoints-section">
-                    <h2>Rutas Principales del API REST</h2>
-                    <div class="endpoint-row">
-                        <span class="method post">POST</span>
-                        <span class="path">/api/auth/login</span>
-                        <span class="desc">Autenticación de usuario con JWT</span>
-                    </div>
-                    <div class="endpoint-row">
-                        <span class="method post">POST</span>
-                        <span class="path">/api/auth/register</span>
-                        <span class="desc">Registro de nuevo usuario</span>
-                    </div>
-                    <div class="endpoint-row">
-                        <span class="method get">GET</span>
-                        <span class="path">/api/productos</span>
-                        <span class="desc">Catálogo de productos con imágenes</span>
-                    </div>
-                    <div class="endpoint-row">
-                        <span class="method get">GET</span>
-                        <span class="path">/api/dashboard/stats</span>
-                        <span class="desc">Métricas y KPIs del inventario</span>
-                    </div>
-                    <div class="endpoint-row">
-                        <span class="method post">POST</span>
-                        <span class="path">/api/ventas</span>
-                        <span class="desc">Registro de venta y descuento de stock</span>
-                    </div>
+                <div class="section-title">Catálogo de Servicios API</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 90px;">Método</th>
+                                <th>Ruta</th>
+                                <th>Descripción</th>
+                                <th style="width: 140px;">Acceso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td class="endpoint-path">/api/auth/login</td>
+                                <td>Autenticación de usuario y retorno de JWT</td>
+                                <td class="access-tag">Público</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td class="endpoint-path">/api/auth/register</td>
+                                <td>Registro de nuevos usuarios</td>
+                                <td class="access-tag">Público</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-get">GET</span></td>
+                                <td class="endpoint-path">/api/productos</td>
+                                <td>Consulta de catálogo de inventario</td>
+                                <td class="access-tag">Bearer Token</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-post">POST</span></td>
+                                <td class="endpoint-path">/api/ventas</td>
+                                <td>Procesamiento transaccional de ventas</td>
+                                <td class="access-tag">Bearer Token</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-get">GET</span></td>
+                                <td class="endpoint-path">/api/dashboard/stats</td>
+                                <td>Consolidado de métricas comerciales</td>
+                                <td class="access-tag">Bearer Token</td>
+                            </tr>
+                            <tr>
+                                <td><span class="method-badge method-get">GET</span></td>
+                                <td class="endpoint-path">/api/movimientos</td>
+                                <td>Auditoría de movimientos de stock (Kardex)</td>
+                                <td class="access-tag">Bearer Token (Admin)</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="footer">
-                    <span>StockMaster &copy; 2026 &bull; Todos los derechos reservados</span>
-                    <a href="https://github.com/lFateGC/StockMaster_Backend" target="_blank" class="btn-repo">Ver Repositorio GitHub &rarr;</a>
+                    <span>StockMaster &bull; Versión 1.0.0-RELEASE</span>
+                    <a href="https://github.com/lFateGC/StockMaster_Backend" target="_blank" class="repo-link">Repositorio del Proyecto</a>
                 </div>
             </div>
         </body>
