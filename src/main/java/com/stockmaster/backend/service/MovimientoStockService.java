@@ -57,21 +57,28 @@ public class MovimientoStockService {
 
         String tipo = request.getTipo().toLowerCase();
         int cantidad = Math.abs(request.getCantidad());
+        int cantidadGuardar = cantidad;
 
         switch (tipo) {
+            case "compra":
+            case "devolucion":
             case "entrada":
                 producto.setStock(producto.getStock() + cantidad);
+                cantidadGuardar = cantidad;
                 break;
+            case "venta":
             case "salida":
                 if (producto.getStock() < cantidad) {
                     throw new InsufficientStockException("Stock insuficiente para salida. Disponible: " +
                             producto.getStock() + ", Solicitado: " + cantidad);
                 }
                 producto.setStock(producto.getStock() - cantidad);
+                cantidadGuardar = -cantidad;
                 break;
             case "ajuste":
-                // En ajuste manual, la cantidad ingresada se establece como el nuevo stock
+                int diferencia = cantidad - producto.getStock();
                 producto.setStock(cantidad);
+                cantidadGuardar = diferencia;
                 break;
             default:
                 throw new IllegalArgumentException("Tipo de movimiento inválido: " + tipo);
@@ -83,7 +90,7 @@ public class MovimientoStockService {
                 .producto(producto)
                 .usuario(usuario)
                 .tipo(tipo)
-                .cantidad(cantidad)
+                .cantidad(cantidadGuardar)
                 .motivo(request.getMotivo() != null ? request.getMotivo().trim() : null)
                 .build();
 
@@ -102,6 +109,7 @@ public class MovimientoStockService {
                 .tipo(m.getTipo())
                 .cantidad(m.getCantidad())
                 .motivo(m.getMotivo())
+                .deDonde(m.getMotivo() != null ? m.getMotivo() : "Operación directa")
                 .fechaMovimiento(m.getFechaMovimiento())
                 .build();
     }

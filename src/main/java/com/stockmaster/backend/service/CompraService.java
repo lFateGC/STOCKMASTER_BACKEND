@@ -103,9 +103,9 @@ public class CompraService {
             MovimientoStock mov = MovimientoStock.builder()
                     .producto(producto)
                     .usuario(usuario)
-                    .tipo("entrada")
-                    .cantidad(item.getCantidad())
-                    .motivo("Compra a proveedor: " + proveedor.getRazonSocial())
+                    .tipo("compra")
+                    .cantidad(Math.abs(item.getCantidad()))
+                    .motivo("Compra: Proveedor " + proveedor.getRazonSocial())
                     .build();
             movimientos.add(mov);
         }

@@ -109,18 +109,18 @@ public class DevolucionService {
                 MovimientoStock mov = MovimientoStock.builder()
                         .producto(producto)
                         .usuario(usuario)
-                        .tipo("entrada")
-                        .cantidad(item.getCantidad())
-                        .motivo("Devolución " + numeroDevolucion + " (Ref: " + venta.getNumeroBoleta() + ") - " + request.getMotivo())
+                        .tipo("devolucion")
+                        .cantidad(Math.abs(item.getCantidad()))
+                        .motivo("Devolución: " + numeroDevolucion + " (Ref: " + venta.getNumeroBoleta() + ") - " + request.getMotivo())
                         .build();
                 movimientos.add(mov);
             } else {
                 MovimientoStock mov = MovimientoStock.builder()
                         .producto(producto)
                         .usuario(usuario)
-                        .tipo("ajuste")
-                        .cantidad(producto.getStock())
-                        .motivo("Merma por Devolución " + numeroDevolucion + " (Ref: " + venta.getNumeroBoleta() + ") - " + request.getMotivo())
+                        .tipo("devolucion")
+                        .cantidad(Math.abs(item.getCantidad()))
+                        .motivo("Devolución / Merma: " + numeroDevolucion + " (Ref: " + venta.getNumeroBoleta() + ") - " + request.getMotivo())
                         .build();
                 movimientos.add(mov);
             }

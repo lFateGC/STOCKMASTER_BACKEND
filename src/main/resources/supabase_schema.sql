@@ -130,8 +130,8 @@ CREATE TABLE IF NOT EXISTS public.movimientos_stock (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     producto_id BIGINT NOT NULL REFERENCES public.productos(id) ON DELETE RESTRICT,
     usuario_id UUID NOT NULL REFERENCES public.perfiles(id) ON DELETE RESTRICT,
-    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('entrada', 'salida', 'ajuste')),
-    cantidad INTEGER NOT NULL CHECK (cantidad > 0),
+    tipo VARCHAR(50) NOT NULL,
+    cantidad INTEGER NOT NULL CHECK (cantidad != 0),
     motivo TEXT,
     fecha_movimiento TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );

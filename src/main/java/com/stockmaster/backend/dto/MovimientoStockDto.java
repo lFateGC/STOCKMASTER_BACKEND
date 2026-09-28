@@ -22,11 +22,10 @@ public class MovimientoStockDto {
         private Long productoId;
 
         @NotBlank(message = "El tipo de movimiento es obligatorio")
-        @Pattern(regexp = "^(entrada|salida|ajuste)$", message = "El tipo debe ser 'entrada', 'salida' o 'ajuste'")
+        @Pattern(regexp = "^(venta|compra|devolucion|entrada|salida|ajuste)$", message = "El tipo debe ser venta, compra, devolucion, entrada, salida o ajuste")
         private String tipo;
 
         @NotNull(message = "La cantidad es obligatoria")
-        @Min(value = 1, message = "La cantidad debe ser mayor a 0")
         private Integer cantidad;
 
         private String motivo;
@@ -46,6 +45,7 @@ public class MovimientoStockDto {
         private String tipo;
         private Integer cantidad;
         private String motivo;
+        private String deDonde;
         private LocalDateTime fechaMovimiento;
 
         // Compatibility aliases for frontend
@@ -53,6 +53,7 @@ public class MovimientoStockDto {
         public String getType() { return tipo; }
         public Integer getQuantity() { return cantidad; }
         public String getReason() { return motivo; }
+        public String getDeDonde() { return deDonde != null ? deDonde : (motivo != null ? motivo : "Operación directa"); }
         public String getUser() { return usuarioNombre; }
         public String getDate() { return fechaMovimiento != null ? fechaMovimiento.toString() : null; }
     }

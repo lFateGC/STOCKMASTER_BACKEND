@@ -124,13 +124,13 @@ public class VentaService {
 
             detalles.add(detalle);
 
-            // Registrar movimiento de salida
+            // Registrar movimiento de salida por venta (cantidad negativa)
             MovimientoStock mov = MovimientoStock.builder()
                     .producto(producto)
                     .usuario(vendedor)
-                    .tipo("salida")
-                    .cantidad(item.getCantidad())
-                    .motivo("Venta Boleta " + numeroBoleta)
+                    .tipo("venta")
+                    .cantidad(-Math.abs(item.getCantidad()))
+                    .motivo("Venta: Boleta " + numeroBoleta)
                     .build();
             movimientos.add(mov);
         }
@@ -196,9 +196,9 @@ public class VentaService {
             MovimientoStock mov = MovimientoStock.builder()
                     .producto(producto)
                     .usuario(usuario)
-                    .tipo("entrada")
-                    .cantidad(detalle.getCantidad())
-                    .motivo("Anulación venta " + venta.getNumeroBoleta())
+                    .tipo("devolucion")
+                    .cantidad(Math.abs(detalle.getCantidad()))
+                    .motivo("Devolución por Anulación: Boleta " + venta.getNumeroBoleta())
                     .build();
             movimientos.add(mov);
         }
