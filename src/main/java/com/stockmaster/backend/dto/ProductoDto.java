@@ -62,6 +62,7 @@ public class ProductoDto {
         private Integer stockMinimo;
         private String estado;
         private Double margen;
+        private Double margenGanancia;
         private String stockLabel;
         private LocalDateTime fechaCreacion;
         private LocalDateTime fechaActualizacion;

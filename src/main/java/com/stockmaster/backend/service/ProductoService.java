@@ -219,6 +219,7 @@ public class ProductoService {
                 .stock(p.getStock())
                 .stockMinimo(p.getStockMinimo())
                 .estado(p.getEstado())
+                .margen(margen)
                 .margenGanancia(margen)
                 .fechaCreacion(p.getFechaCreacion())
                 .fechaActualizacion(p.getFechaActualizacion())
