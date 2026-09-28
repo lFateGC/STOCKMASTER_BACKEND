@@ -37,8 +37,10 @@ public class VentaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VentaDto.Response> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ventaService.findById(id));
+    public ResponseEntity<VentaDto.Response> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(ventaService.findById(id, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @PostMapping
@@ -46,13 +48,13 @@ public class VentaController {
             @Valid @RequestBody VentaDto.Request request,
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ventaService.createVenta(request, userDetails.getUsername()));
+                .body(ventaService.createVenta(request, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @PatchMapping("/{id}/anular")
     public ResponseEntity<VentaDto.Response> anular(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(ventaService.anularVenta(id, userDetails.getUsername()));
+        return ResponseEntity.ok(ventaService.anularVenta(id, userDetails != null ? userDetails.getUsername() : null));
     }
 }

@@ -26,6 +26,7 @@ public class CompraService {
     private final MovimientoStockRepository movimientoStockRepository;
     private final ProveedorService proveedorService;
     private final UsuarioService usuarioService;
+    private final AuditoriaService auditoriaService;
 
     private static final BigDecimal IGV_RATE = BigDecimal.valueOf(0.18);
 
@@ -48,8 +49,23 @@ public class CompraService {
     }
 
     public CompraDto.Response findById(Long id) {
+        return findById(id, null);
+    }
+
+    public CompraDto.Response findById(Long id, String userCorreo) {
         Compra compra = compraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra no encontrada con ID: " + id));
+
+        if (userCorreo != null) {
+            auditoriaService.registrar(
+                    userCorreo,
+                    "VER",
+                    "COMPRAS",
+                    "Compra #" + compra.getId(),
+                    "Visualización de orden de compra (Proveedor: " + compra.getProveedor().getRazonSocial() + ")"
+            );
+        }
+
         return mapToDto(compra);
     }
 
@@ -112,6 +128,14 @@ public class CompraService {
 
         Compra guardada = compraRepository.save(compra);
         movimientoStockRepository.saveAll(movimientos);
+
+        auditoriaService.registrar(
+                userCorreo,
+                "CREAR",
+                "COMPRAS",
+                "Compra #" + guardada.getId(),
+                "Compra registrada a " + proveedor.getRazonSocial() + " por un total de S/ " + guardada.getTotal()
+        );
 
         return mapToDto(guardada);
     }

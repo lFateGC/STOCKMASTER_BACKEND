@@ -21,6 +21,7 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaService categoriaService;
+    private final AuditoriaService auditoriaService;
 
     public List<ProductoDto.Response> findAll() {
         return productoRepository.findAll().stream()
@@ -35,8 +36,23 @@ public class ProductoService {
     }
 
     public ProductoDto.Response findById(Long id) {
+        return findById(id, null);
+    }
+
+    public ProductoDto.Response findById(Long id, String userCorreo) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+
+        if (userCorreo != null) {
+            auditoriaService.registrar(
+                    userCorreo,
+                    "VER",
+                    "PRODUCTOS",
+                    producto.getNombre(),
+                    "Consulta de producto (SKU: " + producto.getSku() + ")"
+            );
+        }
+
         return mapToDto(producto);
     }
 
@@ -60,8 +76,12 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public ProductoDto.Response create(ProductoDto.Request request) {
+        return create(request, null);
+    }
+
+    @Transactional
+    public ProductoDto.Response create(ProductoDto.Request request, String userCorreo) {
         if (request.getSku() != null && !request.getSku().isBlank()) {
             if (productoRepository.existsBySku(request.getSku().trim())) {
                 throw new BadRequestException("Ya existe un producto con el SKU: " + request.getSku());
@@ -83,11 +103,25 @@ public class ProductoService {
                 .estado(request.getEstado() != null ? request.getEstado() : "activo")
                 .build();
 
-        return mapToDto(productoRepository.save(producto));
+        Producto guardado = productoRepository.save(producto);
+
+        auditoriaService.registrar(
+                userCorreo,
+                "CREAR",
+                "PRODUCTOS",
+                guardado.getNombre(),
+                "Producto creado (SKU: " + guardado.getSku() + ", Stock inicial: " + guardado.getStock() + ")"
+        );
+
+        return mapToDto(guardado);
+    }
+
+    public ProductoDto.Response update(Long id, ProductoDto.Request request) {
+        return update(id, request, null);
     }
 
     @Transactional
-    public ProductoDto.Response update(Long id, ProductoDto.Request request) {
+    public ProductoDto.Response update(Long id, ProductoDto.Request request, String userCorreo) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
 
@@ -129,15 +163,37 @@ public class ProductoService {
             producto.setEstado(request.getEstado());
         }
 
-        return mapToDto(productoRepository.save(producto));
+        Producto actualizado = productoRepository.save(producto);
+
+        auditoriaService.registrar(
+                userCorreo,
+                "EDITAR",
+                "PRODUCTOS",
+                actualizado.getNombre(),
+                "Actualización de producto ID: " + id + " (Stock actual: " + actualizado.getStock() + ")"
+        );
+
+        return mapToDto(actualizado);
+    }
+
+    public void delete(Long id) {
+        delete(id, null);
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String userCorreo) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
         producto.setEstado("inactivo");
         productoRepository.save(producto);
+
+        auditoriaService.registrar(
+                userCorreo,
+                "ELIMINAR",
+                "PRODUCTOS",
+                producto.getNombre(),
+                "Inactivación de producto ID: " + id + " (" + producto.getSku() + ")"
+        );
     }
 
     public ProductoDto.Response mapToDto(Producto p) {
@@ -150,17 +206,10 @@ public class ProductoService {
                     .doubleValue();
         }
 
-        String stockLabel = "Normal";
-        if (p.getStock() <= 0) {
-            stockLabel = "Sin stock";
-        } else if (p.getStock() <= p.getStockMinimo()) {
-            stockLabel = "Stock bajo";
-        }
-
         return ProductoDto.Response.builder()
                 .id(p.getId())
-                .categoriaId(p.getCategoria() != null ? p.getCategoria().getId() : null)
-                .categoriaNombre(p.getCategoria() != null ? p.getCategoria().getNombre() : null)
+                .categoriaId(p.getCategoria().getId())
+                .categoriaNombre(p.getCategoria().getNombre())
                 .sku(p.getSku())
                 .nombre(p.getNombre())
                 .descripcion(p.getDescripcion())
@@ -170,8 +219,7 @@ public class ProductoService {
                 .stock(p.getStock())
                 .stockMinimo(p.getStockMinimo())
                 .estado(p.getEstado())
-                .margen(margen)
-                .stockLabel(stockLabel)
+                .margenGanancia(margen)
                 .fechaCreacion(p.getFechaCreacion())
                 .fechaActualizacion(p.getFechaActualizacion())
                 .build();

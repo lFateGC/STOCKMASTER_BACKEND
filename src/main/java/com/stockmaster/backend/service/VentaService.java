@@ -31,6 +31,7 @@ public class VentaService {
     private final MovimientoStockRepository movimientoStockRepository;
     private final MetodoPagoService metodoPagoService;
     private final UsuarioService usuarioService;
+    private final AuditoriaService auditoriaService;
 
     private static final BigDecimal IGV_RATE = BigDecimal.valueOf(0.18);
 
@@ -53,8 +54,23 @@ public class VentaService {
     }
 
     public VentaDto.Response findById(Long id) {
+        return findById(id, null);
+    }
+
+    public VentaDto.Response findById(Long id, String userCorreo) {
         Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con ID: " + id));
+
+        if (userCorreo != null) {
+            auditoriaService.registrar(
+                    userCorreo,
+                    "VER",
+                    "VENTAS",
+                    venta.getNumeroBoleta(),
+                    "Visualización de comprobante de venta"
+            );
+        }
+
         return mapToDto(venta);
     }
 
@@ -149,6 +165,14 @@ public class VentaService {
         Venta guardada = ventaRepository.save(venta);
         movimientoStockRepository.saveAll(movimientos);
 
+        auditoriaService.registrar(
+                userCorreo,
+                "CREAR",
+                "VENTAS",
+                numeroBoleta,
+                "Comprobante emitido a " + guardada.getCliente() + " por un total de S/ " + guardada.getTotal()
+        );
+
         return mapToDto(guardada);
     }
 
@@ -182,6 +206,14 @@ public class VentaService {
         venta.setEstado("anulada");
         Venta guardada = ventaRepository.save(venta);
         movimientoStockRepository.saveAll(movimientos);
+
+        auditoriaService.registrar(
+                userCorreo,
+                "ELIMINAR",
+                "VENTAS",
+                venta.getNumeroBoleta(),
+                "Comprobante anulado. Stock devuelto a inventario."
+        );
 
         return mapToDto(guardada);
     }

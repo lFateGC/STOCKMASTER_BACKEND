@@ -40,8 +40,11 @@ public class CompraController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CompraDto.Response> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(compraService.findById(id));
+    public ResponseEntity<CompraDto.Response> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String correo = userDetails != null ? userDetails.getUsername() : null;
+        return ResponseEntity.ok(compraService.findById(id, correo));
     }
 
     @PostMapping

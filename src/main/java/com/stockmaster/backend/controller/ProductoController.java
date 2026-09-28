@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +30,10 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDto.Response> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(productoService.findById(id));
+    public ResponseEntity<ProductoDto.Response> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(productoService.findById(id, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @GetMapping("/search")
@@ -44,25 +48,36 @@ public class ProductoController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductoDto.Response> create(@Valid @RequestBody ProductoDto.Request request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.create(request));
+    public ResponseEntity<ProductoDto.Response> create(
+            @Valid @RequestBody ProductoDto.Request request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productoService.create(request, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductoDto.Response> update(@PathVariable Long id, @RequestBody ProductoDto.Request request) {
-        return ResponseEntity.ok(productoService.update(id, request));
+    public ResponseEntity<ProductoDto.Response> update(
+            @PathVariable Long id,
+            @RequestBody ProductoDto.Request request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(productoService.update(id, request, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductoDto.Response> patchUpdate(@PathVariable Long id, @RequestBody ProductoDto.Request request) {
-        return ResponseEntity.ok(productoService.update(id, request));
+    public ResponseEntity<ProductoDto.Response> patchUpdate(
+            @PathVariable Long id,
+            @RequestBody ProductoDto.Request request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(productoService.update(id, request, userDetails != null ? userDetails.getUsername() : null));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productoService.delete(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        productoService.delete(id, userDetails != null ? userDetails.getUsername() : null);
         return ResponseEntity.noContent().build();
     }
 }
